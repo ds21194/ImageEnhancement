@@ -5,6 +5,12 @@ from constants import BIAS_VAL
 
 
 def restore_image(corrupted_image, base_model):
+    """
+    given a trained model "base_model", and noised / blurred image, will return an improved image.
+    :param corrupted_image: numpy ndarray
+    :param base_model: trained model
+    :return: ndarray representing an image
+    """
     corrupted_image = corrupted_image[..., np.newaxis]
     image_shape = corrupted_image.shape
     a = kr.layers.Input(shape=image_shape)

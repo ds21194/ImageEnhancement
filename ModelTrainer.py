@@ -2,12 +2,24 @@ import tensorflow.keras as kr
 import numpy as np
 
 import utils
-import NnArchitecture as nnArchit
+from NnArchitecture import build_nn_model
 from DataManipulator import random_motion_blur, add_gaussian_noise
 from DataCreator import load_dataset, get_random_train_validation_set
 
 
 def train_model(model, images, corruption_func, batch_size, steps_per_epoch, num_epochs, num_valid_samples):
+    """
+    build a general training model
+    :param model:
+    :param images:
+    :param corruption_func:
+    :param batch_size:
+    :param steps_per_epoch:
+    :param num_epochs:
+    :param num_valid_samples:
+    :return:
+    """
+
     # compile the model with his optimizer and loss function.
     adam_opt = kr.optimizers.Adam(beta_2=0.9)
     kr.Model.compile(model, adam_opt, loss='mean_squared_error')
@@ -26,27 +38,39 @@ def train_model(model, images, corruption_func, batch_size, steps_per_epoch, num
 
 
 def learn_denoising_model(num_res_blocks=5, quick_mode=False):
+    """
+    model learning for fixing noised images. quick_mode is mainly for debugging purpose, so the result will be faster.
+    :param num_res_blocks: number of residual blocks inside the neural network architecture
+    :param quick_mode: boolean parameter
+    :return: trained model for noised images
+    """
     data = utils.images_for_denoising()
 
-    denoise_model = nnArchit.build_nn_model(24, 24, 48, num_res_blocks)
+    denoise_model = build_nn_model(24, 24, 48, num_res_blocks)
     global training_history
     if quick_mode:
-        training_history = nnArchit.train_model(denoise_model, data, lambda image: add_gaussian_noise(image, 0, 0.2),
+        training_history = train_model(denoise_model, data, lambda image: add_gaussian_noise(image, 0, 0.2),
                                        10, 3, 2, 30)
     else:
-        training_history = nnArchit.train_model(denoise_model, data, lambda image: add_gaussian_noise(image, 0, 0.2),
+        training_history = train_model(denoise_model, data, lambda image: add_gaussian_noise(image, 0, 0.2),
                                        100, 100, 5, 1000)
     return denoise_model
 
 
 def learn_deblurring_model(num_res_blocks=5, quick_mode=False):
+    """
+    model learning for fixing blurred images. quick_mode is mainly for debugging purpose, so the result will be faster.
+    :param num_res_blocks: number of residual blocks inside the neural network architecture
+    :param quick_mode: boolean parameter
+    :return: trained model for blurred images
+    """
     data = utils.images_for_deblurring()
-    deblur_model = nnArchit.build_nn_model(16, 16, 32, num_res_blocks)
+    deblur_model = build_nn_model(16, 16, 32, num_res_blocks)
     if quick_mode:
-        nnArchit.train_model(deblur_model, data, lambda image: random_motion_blur(image, [7]),
+        train_model(deblur_model, data, lambda image: random_motion_blur(image, [7]),
                     10, 3, 2, 30)
     else:
-        nnArchit.train_model(deblur_model, data, lambda image: random_motion_blur(image, [7]),
+        train_model(deblur_model, data, lambda image: random_motion_blur(image, [7]),
                     100, 100, 10, 1000)
 
     return deblur_model

@@ -10,21 +10,24 @@ COLOR_SIZE = 256
 
 
 def relpath(path):
-    """Returns the relative path to the script's location
+    """
+    Returns the relative path to the script's location
 
-    Arguments:
-    path -- a string representation of a path.
+    :param path: a string representation of a path.
+    :return:
     """
     return os.path.join(os.path.dirname(__file__), path)
 
 
 def list_images(path, use_shuffle=True):
-    """Returns a list of paths to images found at the specified directory.
-
-    Arguments:
-    path -- path to a directory to search for images.
-    use_shuffle -- option to shuffle order of files. Uses a fixed shuffled order.
     """
+    Returns a list of paths to images found at the specified directory.
+
+    :param path: path to a directory to search for images.
+    :param use_shuffle: option to shuffle order of files. Uses a fixed shuffled order.
+    :return:
+    """
+
     def is_image(filename):
         return os.path.splitext(filename)[-1][1:].lower() in ['jpg', 'png']
     images = list(map(lambda x: os.path.join(path, x), filter(is_image, os.listdir(path))))
@@ -38,28 +41,33 @@ def list_images(path, use_shuffle=True):
 
 
 def images_for_denoising():
-    """Returns a list of image paths to be used for image denoising in Ex5"""
-    return list_images(relpath('image_dataset/train'), True)
+    """
+    Returns a list of image paths to be used for image denoising
+    """
+    return list_images(relpath('datasets/image_dataset/train'), True)
 
 
 def images_for_deblurring():
-    """Returns a list of image paths to be used for text deblurring in Ex5"""
-    return list_images(relpath('text_dataset/train'), True)
-
-# For those who wish to experiment...
+    """
+    Returns a list of image paths to be used for text deblurring
+    """
+    return list_images(relpath('datasets/text_dataset/train'), True)
 
 
 def images_for_super_resolution():
-    """Returns a list of image paths to be used for image super-resolution in Ex5"""
+    """
+    Returns a list of image paths to be used for image super-resolution
+    """
     return list_images(relpath('image_dataset/train'), True)
 
 
 def motion_blur_kernel(kernel_size, angle):
-    """Returns a 2D image kernel for motion blur effect.
+    """
+    Returns a 2D image kernel for motion blur effect.
 
-    Arguments:
-    kernel_size -- the height and width of the kernel. Controls strength of blur.
-    angle -- angle in the range [0, np.pi) for the direction of the motion.
+    :param kernel_size: the height and width of the kernel. Controls strength of blur.
+    :param angle: angle in the range [0, np.pi) for the direction of the motion.
+    :return:
     """
     if kernel_size % 2 == 0:
         raise ValueError('kernel_size must be an odd number!')
@@ -86,6 +94,4 @@ def motion_blur_kernel(kernel_size, angle):
     kernel[rr, cc] = 1.0
     kernel /= kernel.sum()
     return kernel
-
-
 
