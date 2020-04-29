@@ -1,7 +1,16 @@
 import numpy as np
-import tensorflow.keras as kr
+import keras as kr
 
 from constants import BIAS_VAL
+
+
+def load_trained_model(path):
+    """
+    Load a pre trained model. 'base_model' parameter for 'restore_image' function
+    :param path: path to the model on the computer
+    :return: a trained model
+    """
+    return kr.models.load_model(path)
 
 
 def restore_image(corrupted_image, base_model):

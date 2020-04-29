@@ -1,4 +1,4 @@
-import tensorflow.keras as kr
+import keras as kr
 
 
 def resblock(input_tensor, num_channels, kernel_size=(3, 3)):

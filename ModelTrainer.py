@@ -1,4 +1,5 @@
-import tensorflow.keras as kr
+
+import keras as kr
 import numpy as np
 
 import utils
@@ -22,7 +23,11 @@ def train_model(model, images, corruption_func, batch_size, steps_per_epoch, num
 
     # compile the model with his optimizer and loss function.
     adam_opt = kr.optimizers.Adam(beta_2=0.9)
-    kr.Model.compile(model, adam_opt, loss='mean_squared_error')
+    kr.models.Model.compile(
+        model,
+        adam_opt,
+        metrics=['accuracy'],
+        loss='mean_squared_error')
 
     images = np.array(images)
     np.random.shuffle(images)
@@ -32,8 +37,14 @@ def train_model(model, images, corruption_func, batch_size, steps_per_epoch, num
     train_gen = load_dataset(images[train_indexes], batch_size, corruption_func, model.input_shape[1:3])
     validation_gen = load_dataset(images[val_indexes], batch_size, corruption_func, model.input_shape[1:3])
 
-    history = kr.Model.fit_generator(model, train_gen, steps_per_epoch, num_epochs, verbose=1,
-                                     validation_data=validation_gen, validation_steps=(num_valid_samples // batch_size))
+    history = kr.models.Model.fit_generator(
+        model,
+        train_gen,
+        steps_per_epoch,
+        num_epochs,
+        verbose=1,
+        validation_data=validation_gen,
+        validation_steps=(num_valid_samples // batch_size))
     return history
 
 
