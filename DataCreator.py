@@ -1,5 +1,7 @@
 import numpy as np
-from DataManipulator import read_image
+from imageio import imread
+from constants import COLOR_SIZE, RGB_NUMBER
+from skimage.color import rgb2gray
 from constants import GRAY_NUMBER, BIAS_VAL
 
 
@@ -16,6 +18,23 @@ def get_image_from_cache(cache, file_path):
     image = read_image(file_path, GRAY_NUMBER)
     cache[file_path] = image
     return image
+
+
+def read_image(filename, representation):
+    """
+    return the image with values between [0,1] with the representation
+    :param filename: image path
+    :param representation: 1 for grayscale and 2 for rgb
+    :return: ndarray representing an image
+    """
+    image = imread(filename)
+    image = image.astype(np.float64)
+    image /= (COLOR_SIZE-1)
+
+    if representation == RGB_NUMBER:
+        return image
+    image_gray = rgb2gray(image)
+    return image_gray
 
 
 def get_random_patch(image, crop_size, corruption_func):

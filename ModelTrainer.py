@@ -6,6 +6,7 @@ import utils
 from NnArchitecture import build_nn_model
 from DataManipulator import random_motion_blur, add_gaussian_noise
 from DataCreator import load_dataset, get_random_train_validation_set
+from constants import DEBLUR_PATCH_SIZE, DENOISE_PATCH_SIZE
 
 
 def train_model(model, images, corruption_func, batch_size, steps_per_epoch, num_epochs, num_valid_samples):
@@ -57,7 +58,9 @@ def learn_denoising_model(num_res_blocks=5, quick_mode=False):
     """
     data = utils.images_for_denoising()
 
-    denoise_model = build_nn_model(24, 24, 48, num_res_blocks)
+    denoise_model = build_nn_model(
+        DENOISE_PATCH_SIZE['height'],
+        DENOISE_PATCH_SIZE['width'], 48, num_res_blocks)
     global training_history
     if quick_mode:
         training_history = train_model(denoise_model, data, lambda image: add_gaussian_noise(image, 0, 0.2),
@@ -76,7 +79,9 @@ def learn_deblurring_model(num_res_blocks=5, quick_mode=False):
     :return: trained model for blurred images
     """
     data = utils.images_for_deblurring()
-    deblur_model = build_nn_model(16, 16, 32, num_res_blocks)
+    deblur_model = build_nn_model(
+        DEBLUR_PATCH_SIZE['height'],
+        DEBLUR_PATCH_SIZE['width'], 32, num_res_blocks)
     if quick_mode:
         train_model(deblur_model, data, lambda image: random_motion_blur(image, [7]),
                     10, 3, 2, 30)

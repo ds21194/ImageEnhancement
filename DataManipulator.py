@@ -1,26 +1,7 @@
 import numpy as np
-from imageio import imread
-from constants import COLOR_SIZE, RGB_NUMBER
-from skimage.color import rgb2gray
 from scipy.ndimage.filters import convolve
+from skimage.draw import line
 import utils
-
-
-def read_image(filename, representation):
-    """
-    return the image with values between [0,1] with the representation
-    :param filename: image path
-    :param representation: 1 for grayscale and 2 for rgb
-    :return: ndarray representing an image
-    """
-    image = imread(filename)
-    image = image.astype(np.float64)
-    image /= (COLOR_SIZE-1)
-
-    if representation == RGB_NUMBER:
-        return image
-    image_gray = rgb2gray(image)
-    return image_gray
 
 
 def round_and_clip(image, min_clip=0, max_clip=1, round_to=255):
@@ -62,3 +43,39 @@ def random_motion_blur(image, list_of_kernel_sizes, min_angle=0, max_angle=np.pi
     kernel_size = np.random.choice(np.array(list_of_kernel_sizes))
     angle = np.random.uniform(min_angle, max_angle)
     return add_motion_blur(image, kernel_size, angle)
+
+
+def motion_blur_kernel(kernel_size, angle):
+    """
+    Returns a 2D image kernel for motion blur effect.
+
+    :param kernel_size: the height and width of the kernel. Controls strength of blur.
+    :param angle: angle in the range [0, np.pi) for the direction of the motion.
+    :return:
+    """
+    if kernel_size % 2 == 0:
+        raise ValueError('kernel_size must be an odd number!')
+    if angle < 0 or angle > np.pi:
+        raise ValueError('angle must be between 0 (including) and pi (not including)')
+    norm_angle = 2.0 * angle / np.pi
+    if norm_angle > 1:
+        norm_angle = 1 - norm_angle
+    half_size = kernel_size // 2
+    if abs(norm_angle) == 1:
+        p1 = (half_size, 0)
+        p2 = (half_size, kernel_size-1)
+    else:
+        alpha = np.tan(np.pi * 0.5 * norm_angle)
+        if abs(norm_angle) <= 0.5:
+            p1 = (2*half_size, half_size - int(round(alpha * half_size)))
+            p2 = (kernel_size-1 - p1[0], kernel_size-1 - p1[1])
+        else:
+            alpha = np.tan(np.pi * 0.5 * (1-norm_angle))
+            p1 = (half_size - int(round(alpha * half_size)), 2*half_size)
+            p2 = (kernel_size - 1 - p1[0], kernel_size-1 - p1[1])
+    rr, cc = line(p1[0], p1[1], p2[0], p2[1])
+    kernel = np.zeros((kernel_size, kernel_size), dtype=np.float64)
+    kernel[rr, cc] = 1.0
+    kernel /= kernel.sum()
+    return kernel
+

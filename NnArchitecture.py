@@ -20,11 +20,12 @@ def resblock(input_tensor, num_channels, kernel_size=(3, 3)):
 
 def build_nn_model(height, width, num_channels, num_res_blocks, kernel_size=(3, 3)):
     """
-
-    :param height:
-    :param width:
-    :param num_channels:
-    :param num_res_blocks:
+    create a neural network model architecture.
+    width and height are for each piece of patch from the picture, to be inserted to the model
+    :param height: integer value
+    :param width: integer value
+    :param num_channels: integer value
+    :param num_res_blocks: integer value
     :param kernel_size:
     :return:
     """
