@@ -1,7 +1,6 @@
 import numpy as np
 from scipy.ndimage.filters import convolve
 from skimage.draw import line
-import utils
 
 
 def round_and_clip(image, min_clip=0, max_clip=1, round_to=255):
@@ -25,7 +24,7 @@ def add_motion_blur(image, kernel_size, angle):
     :param angle: angle to apply with the motion blue, in radians
     :return: a grayscale image blurred, values in the [0,1] range of type float64
     """
-    kernel = utils.motion_blur_kernel(kernel_size, angle)
+    kernel = motion_blur_kernel(kernel_size, angle)
     motioned_img = convolve(image, kernel)
     return round_and_clip(motioned_img)
 
@@ -42,6 +41,7 @@ def random_motion_blur(image, list_of_kernel_sizes, min_angle=0, max_angle=np.pi
 
     kernel_size = np.random.choice(np.array(list_of_kernel_sizes))
     angle = np.random.uniform(min_angle, max_angle)
+
     return add_motion_blur(image, kernel_size, angle)
 
 
@@ -73,9 +73,11 @@ def motion_blur_kernel(kernel_size, angle):
             alpha = np.tan(np.pi * 0.5 * (1-norm_angle))
             p1 = (half_size - int(round(alpha * half_size)), 2*half_size)
             p2 = (kernel_size - 1 - p1[0], kernel_size-1 - p1[1])
+
     rr, cc = line(p1[0], p1[1], p2[0], p2[1])
     kernel = np.zeros((kernel_size, kernel_size), dtype=np.float64)
     kernel[rr, cc] = 1.0
     kernel /= kernel.sum()
+
     return kernel
 

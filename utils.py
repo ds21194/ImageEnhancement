@@ -18,16 +18,22 @@ def list_images(path, use_shuffle=True):
 
     :param path: path to a directory to search for images.
     :param use_shuffle: option to shuffle order of files. Uses a fixed shuffled order.
-    :return:
+    :return: list files of images inside path. will return only images with 'jpg' or 'png' format.
     """
 
     def is_image(filename):
         return os.path.splitext(filename)[-1][1:].lower() in ['jpg', 'png']
-    images = list(map(lambda x: os.path.join(path, x), filter(is_image, os.listdir(path))))
+
+    # get list of all images with format 'png' or 'jpg'
+    filtered_images = filter(is_image, os.listdir(path))
+
+    # for every image add the relative path given to the image name
+    images = list(map(lambda x: os.path.join(path, x), filtered_images))
+
     # Shuffle with a fixed seed without affecting global state
     if use_shuffle:
         s = random.getstate()
-        random.seed(1234)
+        random.seed()
         random.shuffle(images)
         random.setstate(s)
     return images
@@ -37,18 +43,19 @@ def images_for_denoising():
     """
     Returns a list of image paths to be used for image denoising
     """
-    return list_images(relpath('datasets/image_dataset/train'), True)
+    return list_images(relpath('datasets\\image_dataset\\train'), True)
 
 
 def images_for_deblurring():
     """
     Returns a list of image paths to be used for text deblurring
     """
-    return list_images(relpath('datasets/text_dataset/train'), True)
+    return list_images(relpath('datasets\\text_dataset\\train'), True)
 
 
 def images_for_super_resolution():
     """
     Returns a list of image paths to be used for image super-resolution
     """
-    return list_images(relpath('image_dataset/train'), True)
+    return list_images(relpath('image_dataset\\train'), True)
+
