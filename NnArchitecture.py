@@ -36,6 +36,8 @@ def build_nn_model(height, width, num_channels, num_res_blocks, kernel_size=(3, 
     resblock_output = act1
     # other block-layers:
     for i in range(num_res_blocks):
+        # normalized_output = kr.layers.BatchNormalization(axis=1, momentum=0.99, epsilon=0.001)(resblock_output)
+        # pooling = kr.layers.MaxPool2D()(normalized_output)
         resblock_output = resblock(resblock_output, num_channels, kernel_size=kernel_size)
     # last layer om the model:
     last_conv_layer = kr.layers.Conv2D(1, kernel_size, padding='same')(resblock_output)

@@ -75,11 +75,17 @@ def learn_denoising_model(num_res_blocks=5, quick_mode=False):
     # global training_history
 
     if quick_mode:
-        train_model(denoise_model, data, lambda image: add_gaussian_noise(image, 0, 0.2),
-                                       10, 3, 2, 30)
+        train_model(
+            denoise_model,
+            data,
+            lambda image: add_gaussian_noise(image, 0, 0.2),
+            10, 3, 2, 30)
     else:
-        train_model(denoise_model, data, lambda image: add_gaussian_noise(image, 0, 0.2),
-                                       100, 100, 5, 1000)
+        train_model(
+            denoise_model,
+            data,
+            lambda image: add_gaussian_noise(image, 0, 0.2),
+            32, 128, 64, 1024)
     return denoise_model
 
 
@@ -99,11 +105,15 @@ def learn_deblurring_model(num_res_blocks=5, quick_mode=False):
         DEBLUR_PATCH_SIZE['width'], 32, num_res_blocks)
 
     if quick_mode:
-        train_model(deblur_model, data, lambda image: random_motion_blur(image, [7]),
+        train_model(deblur_model,
+                    data,
+                    lambda image: random_motion_blur(image, [5]),
                     10, 3, 2, 30)
     else:
-        train_model(deblur_model, data, lambda image: random_motion_blur(image, [7]),
-                    100, 100, 10, 1000)
+        train_model(deblur_model,
+                    data,
+                    lambda image: random_motion_blur(image, [5]),
+                    128, 128, 16, 1024)
 
     return deblur_model
 
