@@ -1,4 +1,4 @@
-# ImageEnhancement
+# Image Enhancement
 
 Image Enhancement using Machine Learning Models of Neural Networks
 
