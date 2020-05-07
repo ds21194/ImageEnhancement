@@ -2,7 +2,9 @@
 
 Image Enhancement using Machine Learning Models of Neural Networks
 
-NOT COMPLETED YET! 
+I used the neural network architecture suggested in [this](https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/He_Deep_Residual_Learning_CVPR_2016_paper.pdf) paper, for Image Enhancement instead of Image recognition. 
+
+The result are not as good as I expected. 
 
 # How to use?
 
@@ -20,3 +22,5 @@ Than you can use the function "restore_image" or "restore_image_v2"
 (they function in different ways)
 
 *for now this works only for grayscale images.
+
+###### You welcome to send me privatly or upload new barch with approvements, or even only to suggest a better way if you have any idea :) 
